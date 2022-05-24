@@ -1,5 +1,6 @@
 package backend.poc.first.POC1BackEnd;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,18 +14,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class Config extends WebSecurityConfigurerAdapter 
 {	
-	@Bean
-	public PasswordEncoder getEncode()
-	{
-		return new BCryptPasswordEncoder();
-	}
+	@Autowired
+	AuthoritiesService service;
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// TODO Auto-generated method stub
+		
+		auth.userDetailsService(service).passwordEncoder(getEncode());
+		
 		auth.inMemoryAuthentication().withUser("razak").
 		password(getEncode().encode("mohamed")).roles("ADMIN");
 		auth.inMemoryAuthentication().withUser("annamalai").
 		password(getEncode().encode("sam")).roles("ADMIN");
+	}
+	@Bean
+	public PasswordEncoder getEncode()
+	{
+		return new BCryptPasswordEncoder();
 	}
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
